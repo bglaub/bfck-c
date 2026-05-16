@@ -3,6 +3,8 @@
 #include <string.h>
 
 #include "fileparser.h"
+#include "tokenlist.h"
+#include "tokenizer.h"
 
 int main(int argc, char **argv) {
   
@@ -11,37 +13,22 @@ int main(int argc, char **argv) {
     return 1;
   }
 
-  char* fileStr = file_to_str(argv[1]);
-/*
-  char fileBuffer[2];
-  char* fileStr = NULL;
-  char* tmp = NULL;
+  char * fileStr = file_to_str(argv[1]);
+  struct token_list tokenlist = parse_tokens(fileStr);
 
-  FILE *fptr;
+  // the tokens have everything to move forward, so free the file string from memory
+  free(fileStr);
 
-  fptr = fopen(argv[1], "r");
+  unsigned int currentTokenIndex;
 
-  int i = 1;
-
-  while(fgets(fileBuffer, 2, fptr)) {
-    tmp = realloc(fileStr, i * 2 * sizeof(char));
-
-    if (tmp == NULL) {
-      printf("Unable to allocate more memory.");
-      return 1;
-    }
-
-    fileStr = tmp;
-    fileStr = strcat(fileStr, fileBuffer);
-
-    i++;
+  for(currentTokenIndex = 0; currentTokenIndex < tokenlist.size; currentTokenIndex++) {
+    struct token token = tokenlist.tokens[currentTokenIndex];
+    printf("symbol: %c\n", token.symbol);
+    printf("column: %d\n", token.position.column);
+    printf("line: %d\n", token.position.line);
+    printf("\n");
   }
 
-  free(tmp);
-  
-  fclose(fptr);
-*/
-  printf("%s\n", fileStr);
 
   return 0;
 }

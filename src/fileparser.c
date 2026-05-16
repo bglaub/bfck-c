@@ -4,8 +4,7 @@
 
 #include "fileparser.h"
 
-
-char * file_to_str(char * fileName)
+char * file_to_str(const char * fileName)
 {
   char buffer[2];
   char* str = NULL;
@@ -22,7 +21,7 @@ char * file_to_str(char * fileName)
 
     if (tmp == NULL) {
       printf("Unable to allocate more memory.");
-      return NULL; // handle error
+      exit(EXIT_FAILURE);
     }
 
     str = tmp;
@@ -30,8 +29,6 @@ char * file_to_str(char * fileName)
 
     i++;
   }
-
-  free(tmp);
   
   fclose(fptr);
 
