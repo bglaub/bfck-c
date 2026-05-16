@@ -1,0 +1,6 @@
+#ifndef FILEPARSER_H
+#define FILEPARSER_H
+
+char * file_to_str(char * fileName);
+
+#endif // FILEPARSER_H
