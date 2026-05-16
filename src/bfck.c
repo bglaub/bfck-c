@@ -3,6 +3,7 @@
 #include <string.h>
 
 #include "fileparser.h"
+#include "token.h"
 #include "tokenlist.h"
 #include "tokenizer.h"
 

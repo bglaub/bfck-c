@@ -1,5 +1,3 @@
-#include "token.h"
-
 #ifndef TOKENLIST_H
 #define TOKENLIST_H
 
