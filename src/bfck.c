@@ -25,11 +25,12 @@ int main(int argc, char **argv) {
   for(currentTokenIndex = 0; currentTokenIndex < tokenlist.size; currentTokenIndex++) {
     struct token token = tokenlist.tokens[currentTokenIndex];
     printf("symbol: %c\n", token.symbol);
-    printf("column: %d\n", token.position.column);
-    printf("line: %d\n", token.position.line);
+    printf("start: %d\n", token.position.start);
+    printf("end: %d\n", token.position.end);
     printf("\n");
   }
 
+  free(tokenlist.tokens);
 
   return 0;
 }

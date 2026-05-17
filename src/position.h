@@ -2,8 +2,8 @@
 #define POSITION_H
 
 struct position {
-  unsigned int column;
-  unsigned int line;
+  unsigned int start;
+  unsigned int end;
 };
 
 #endif // POSITION_H

@@ -1,3 +1,4 @@
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -5,6 +6,24 @@
 #include "token.h"
 #include "tokenlist.h"
 #include "tokenizer.h"
+
+
+static bool is_token_symbol(char symbol)
+{
+  switch(symbol) {
+    case '>':
+    case '<':
+    case '[':
+    case ']':
+    case '+':
+    case '-':
+    case '.':
+    case ',':
+      return true;
+    default:
+      return false;
+  }
+}
 
 struct token_list parse_tokens(const char * str)
 {
@@ -14,20 +33,16 @@ struct token_list parse_tokens(const char * str)
 
   unsigned int currentSymbolIndex = 0;
   unsigned int tokenCount = 0;
-  unsigned int column = 1;
-  unsigned int line = 1;
+  unsigned int characterCount = 0;
 
   for(currentSymbolIndex = 0; currentSymbolIndex < strLen; currentSymbolIndex++) {
     if(is_token_symbol(str[currentSymbolIndex])) {
       tokens[tokenCount].symbol = str[currentSymbolIndex];
-      tokens[tokenCount].position.column = column;
-      tokens[tokenCount].position.line = line;
+      tokens[tokenCount].position.start = characterCount;
+      tokens[tokenCount].position.end = characterCount + 1;
       tokenCount++;
-    } else if(str[currentSymbolIndex] == '\n') {
-      column = 0;
-      line++;
     }
-    column++;
+    characterCount++;
   }
 
   struct token * tmp = realloc(tokens, tokenCount * sizeof(struct token));
@@ -43,21 +58,4 @@ struct token_list parse_tokens(const char * str)
     .tokens = tokens,
     .size = tokenCount
   };
-}
-
-bool is_token_symbol(char symbol)
-{
-  switch(symbol) {
-    case '>':
-    case '<':
-    case '[':
-    case ']':
-    case '+':
-    case '-':
-    case '.':
-    case ',':
-      return true;
-    default:
-      return false;
-  }
 }
