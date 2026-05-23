@@ -1,3 +1,5 @@
+#include "tokenlist.h"
+
 #ifndef TOKENIZER_H
 #define TOKENIZER_H
 

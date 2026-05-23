@@ -1,0 +1,104 @@
+#include <stdlib.h>
+
+#include "parser.h"
+#include "identifier.h"
+
+
+enum identifier get_identifier(struct token * token) {
+  if(token->symbol == '>') {
+    return INCREMENT_DATA_POINTER;
+  } else if (token->symbol == '<') {
+    return DECREMENT_DATA_POINTER;
+  } else if (token->symbol == '+') {
+    return INCREMENT_BYTE;
+  } else if (token->symbol == '-') {
+    return DECREMENT_BYTE;
+  } else if (token->symbol == '.') {
+    return OUTPUT_BYTE;
+  } else if (token->symbol == ',') {
+    return INPUT_BYTE;
+  } else if (token->symbol == '[') {
+    return MOVE_FORWARD_INSTRUCTION_POINTER;
+  } else if (token->symbol == ']') {
+    return MOVE_BACKWARD_INSTRUCTION_POINTER;
+  }
+
+  // this should never ever happen
+}
+
+static struct treenode *build_syntax_tree(struct treenode * currentNode, struct token_list *tokenlist, unsigned int currentTokenIndex)
+{
+  if(tokenlist->size <= currentTokenIndex) {
+    if(currentNode->parent->identifier != PROGRAM_START) {
+      // started loop with no ending close symbol "]"
+      // need to exit, but for now ignore
+    }
+    return currentNode;
+  }
+
+  struct treenode * nextNode = currentNode;
+  struct token * currentToken = &(tokenlist->tokens[currentTokenIndex]);
+
+  if(currentToken->symbol == '[') {
+    struct treenode * tmp = realloc(currentNode->children, (currentNode->child_count + 1) * sizeof(struct treenode));
+    
+    if (tmp == NULL) {
+      // handle bad condition
+    }
+
+    currentNode->children = tmp;
+    currentNode->child_count++;
+    currentNode->children[currentNode->child_count - 1].parent = currentNode;
+    currentNode->children[currentNode->child_count - 1].children = NULL;
+    currentNode->children[currentNode->child_count - 1].child_count = 0;
+    currentNode->children[currentNode->child_count - 1].identifier = LOOP;
+    currentNode->children[currentNode->child_count - 1].range.start = currentToken->range.start;
+
+    currentNode = &(currentNode->children[currentNode->child_count - 1]);
+    nextNode = &(currentNode->children[currentNode->child_count - 1]);
+  } else if(currentToken->symbol == ']') {
+    if(currentNode->identifier != LOOP) {
+      // ended loop with no beginning symbol "["
+      // need to exit, but for now ignore
+    }
+    currentNode->range.end = currentToken->range.end;
+    nextNode = currentNode->parent;
+  }
+
+  struct treenode * tmp = realloc(currentNode->children, (currentNode->child_count + 1) * sizeof(struct treenode));
+  
+  if (tmp == NULL) {
+    // handle bad condition
+  }
+
+  currentNode->children = tmp;
+  currentNode->child_count++;
+  currentNode->children[currentNode->child_count - 1].parent = currentNode;
+  currentNode->children[currentNode->child_count - 1].children = NULL;
+  currentNode->children[currentNode->child_count - 1].child_count = 0;
+  currentNode->children[currentNode->child_count - 1].identifier = get_identifier(currentToken);
+  currentNode->children[currentNode->child_count - 1].range.start = currentToken->range.start;
+  currentNode->children[currentNode->child_count - 1].range.end = currentToken->range.end;
+
+  build_syntax_tree(nextNode, tokenlist, currentTokenIndex++);
+}
+
+struct treenode *parse_tree(struct token_list *tokenlist)
+{
+  if (tokenlist == NULL || tokenlist->size <= 0) {
+    // what do we do here
+    return NULL;
+  }
+
+  struct treenode *syntax_tree = malloc(sizeof(struct treenode));
+  syntax_tree[0].parent = NULL;
+  syntax_tree[0].children = NULL;
+  syntax_tree[0].child_count = 0;
+  syntax_tree[0].identifier = PROGRAM_START;
+  syntax_tree[0].range.start = tokenlist->tokens[0].range.start;
+  syntax_tree[0].range.end = tokenlist->tokens[tokenlist->size - 1].range.end;
+
+  syntax_tree = build_syntax_tree(syntax_tree, tokenlist, 0);
+
+  return syntax_tree;
+}

@@ -38,8 +38,8 @@ struct token_list parse_tokens(const char *str)
   for (currentSymbolIndex = 0; currentSymbolIndex < strLen; currentSymbolIndex++) {
     if (is_token_symbol(str[currentSymbolIndex])) {
       tokens[tokenCount].symbol = str[currentSymbolIndex];
-      tokens[tokenCount].position.start = characterCount;
-      tokens[tokenCount].position.end = characterCount + 1;
+      tokens[tokenCount].range.start = characterCount;
+      tokens[tokenCount].range.end = characterCount + 1;
       tokenCount++;
     }
     characterCount++;

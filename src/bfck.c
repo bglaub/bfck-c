@@ -6,6 +6,7 @@
 #include "token.h"
 #include "tokenlist.h"
 #include "tokenizer.h"
+#include "parser.h"
 
 int main(int argc, char **argv)
 {
@@ -20,15 +21,7 @@ int main(int argc, char **argv)
   // the tokens have everything to move forward, so free the file string from memory
   free(fileStr);
 
-  unsigned int currentTokenIndex;
-
-  for (currentTokenIndex = 0; currentTokenIndex < tokenlist.size; currentTokenIndex++) {
-    struct token token = tokenlist.tokens[currentTokenIndex];
-    printf("symbol: %c\n", token.symbol);
-    printf("start: %d\n", token.position.start);
-    printf("end: %d\n", token.position.end);
-    printf("\n");
-  }
+  struct treenode *syntax_tree = parse_tree(&tokenlist);
 
   free(tokenlist.tokens);
 
