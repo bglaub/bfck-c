@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdio.h>
 
 #include "parser.h"
 #include "identifier.h"
@@ -29,7 +30,8 @@ enum identifier get_identifier(struct token * token) {
 static struct treenode *build_syntax_tree(struct treenode * currentNode, struct token_list *tokenlist, unsigned int currentTokenIndex)
 {
   if(tokenlist->size <= currentTokenIndex) {
-    if(currentNode->parent->identifier != PROGRAM_START) {
+    printf("Breaking Loop\n");
+    if(currentNode->identifier != PROGRAM_START) {
       // started loop with no ending close symbol "]"
       // need to exit, but for now ignore
     }
@@ -39,7 +41,15 @@ static struct treenode *build_syntax_tree(struct treenode * currentNode, struct 
   struct treenode * nextNode = currentNode;
   struct token * currentToken = &(tokenlist->tokens[currentTokenIndex]);
 
+  printf("--------------------------------------------------------------------------\n");
+  printf("Starting on token: %d, %c\n", currentTokenIndex, currentToken->symbol);
+  printf("Current node identifier: %d\n", currentNode->identifier);
+  printf("Current node child count: %d\n", currentNode->child_count);
+  printf("--------------------------------------------------------------------------\n");
+
   if(currentToken->symbol == '[') {
+
+    printf("Creating loop node.\n");
     struct treenode * tmp = realloc(currentNode->children, (currentNode->child_count + 1) * sizeof(struct treenode));
     
     if (tmp == NULL) {
@@ -47,15 +57,23 @@ static struct treenode *build_syntax_tree(struct treenode * currentNode, struct 
     }
 
     currentNode->children = tmp;
+    currentNode->children[currentNode->child_count].parent = currentNode;
+    currentNode->children[currentNode->child_count].children = NULL;
+    currentNode->children[currentNode->child_count].child_count = 0;
+    currentNode->children[currentNode->child_count].identifier = LOOP;
+    currentNode->children[currentNode->child_count].range.start = currentToken->range.start;
     currentNode->child_count++;
-    currentNode->children[currentNode->child_count - 1].parent = currentNode;
-    currentNode->children[currentNode->child_count - 1].children = NULL;
-    currentNode->children[currentNode->child_count - 1].child_count = 0;
-    currentNode->children[currentNode->child_count - 1].identifier = LOOP;
-    currentNode->children[currentNode->child_count - 1].range.start = currentToken->range.start;
+
+    
+    printf("Current node child count: %d\n", currentNode->child_count);
+    printf("Loop node child count: %d\n", currentNode->children[currentNode->child_count - 1].child_count);
 
     currentNode = &(currentNode->children[currentNode->child_count - 1]);
-    nextNode = &(currentNode->children[currentNode->child_count - 1]);
+    nextNode = currentNode;
+
+    printf("Current node identifier: %d\n", currentNode->identifier);
+    printf("Current node child count: %d\n", currentNode->child_count);
+
   } else if(currentToken->symbol == ']') {
     if(currentNode->identifier != LOOP) {
       // ended loop with no beginning symbol "["
@@ -72,15 +90,15 @@ static struct treenode *build_syntax_tree(struct treenode * currentNode, struct 
   }
 
   currentNode->children = tmp;
+  currentNode->children[currentNode->child_count].parent = currentNode;
+  currentNode->children[currentNode->child_count].children = NULL;
+  currentNode->children[currentNode->child_count].child_count = 0;
+  currentNode->children[currentNode->child_count].identifier = get_identifier(currentToken);
+  currentNode->children[currentNode->child_count].range.start = currentToken->range.start;
+  currentNode->children[currentNode->child_count].range.end = currentToken->range.end;
   currentNode->child_count++;
-  currentNode->children[currentNode->child_count - 1].parent = currentNode;
-  currentNode->children[currentNode->child_count - 1].children = NULL;
-  currentNode->children[currentNode->child_count - 1].child_count = 0;
-  currentNode->children[currentNode->child_count - 1].identifier = get_identifier(currentToken);
-  currentNode->children[currentNode->child_count - 1].range.start = currentToken->range.start;
-  currentNode->children[currentNode->child_count - 1].range.end = currentToken->range.end;
 
-  build_syntax_tree(nextNode, tokenlist, currentTokenIndex++);
+  build_syntax_tree(nextNode, tokenlist, ++currentTokenIndex);
 }
 
 struct treenode *parse_tree(struct token_list *tokenlist)
@@ -98,7 +116,12 @@ struct treenode *parse_tree(struct token_list *tokenlist)
   syntax_tree[0].range.start = tokenlist->tokens[0].range.start;
   syntax_tree[0].range.end = tokenlist->tokens[tokenlist->size - 1].range.end;
 
+  printf("Token Count: %d\n", tokenlist->size);
+  printf("Building Tree.\n");
+
   syntax_tree = build_syntax_tree(syntax_tree, tokenlist, 0);
+  
+  printf("Tree Built");
 
   return syntax_tree;
 }

@@ -23,7 +23,9 @@ int main(int argc, char **argv)
 
   struct treenode *syntax_tree = parse_tree(&tokenlist);
 
+  printf("We made it out.\n");
+  
   free(tokenlist.tokens);
-
+  
   return 0;
 }

@@ -33,7 +33,7 @@ PackConstructorInitializers: NextLine
 ColumnLimit: 120
 
 # Pointer/reference alignment - space before * (Right alignment)
-PointerAlignment: Right
+PointerAlignment: Middle
 ReferenceAlignment: Right
 
 # Spaces
