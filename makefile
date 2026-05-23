@@ -53,6 +53,7 @@ format-check:
 	echo "All files are properly formatted!"
 
 format:
-	$(SRC) $(HEADER) | xargs clang-format -i --fail-on-incomplete-format
+	clang-format -i $(SRC) $(HEADER)
+
 clean:
 	@$(RM) -rv $(BIN_DIR) $(OBJ_DIR)

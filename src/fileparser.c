@@ -4,11 +4,11 @@
 
 #include "fileparser.h"
 
-char * file_to_str(const char * fileName)
+char *file_to_str(const char *fileName)
 {
   char buffer[2];
-  char* str = NULL;
-  char* tmp = NULL;
+  char *str = NULL;
+  char *tmp = NULL;
 
   FILE *fptr;
 
@@ -16,7 +16,7 @@ char * file_to_str(const char * fileName)
 
   int i = 1;
 
-  while(fgets(buffer, 2, fptr)) {
+  while (fgets(buffer, 2, fptr)) {
     tmp = realloc(str, i * 2 * sizeof(char));
 
     if (tmp == NULL) {
@@ -29,7 +29,7 @@ char * file_to_str(const char * fileName)
 
     i++;
   }
-  
+
   fclose(fptr);
 
   return str;

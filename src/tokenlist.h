@@ -1,8 +1,9 @@
 #ifndef TOKENLIST_H
 #define TOKENLIST_H
 
-struct token_list {
-  struct token * tokens;
+struct token_list
+{
+  struct token *tokens;
   unsigned int size;
 };
 

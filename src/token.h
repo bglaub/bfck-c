@@ -3,7 +3,8 @@
 #ifndef TOKEN_H
 #define TOKEN_H
 
-struct token {
+struct token
+{
   char symbol;
   struct position position;
 };
