@@ -7,6 +7,7 @@ BIN_DIR   := bin
 # 2. Project & Compiler Settings
 EXE      := $(BIN_DIR)/bfck
 SRC      := $(wildcard $(SRC_DIR)/*.c)
+HEADER   := $(wildcard $(SRC_DIR)/*.h)
 # Convert src/file.c to obj/file.o
 OBJ      := $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 
@@ -17,7 +18,7 @@ LDFLAGS  := -Llib
 LDLIBS   := -lm
 
 # 3. Primary Targets
-.PHONY: all static-anlysis clean
+.PHONY: all static-anlysis format-check format clean
 
 all: $(EXE)
 
@@ -36,5 +37,22 @@ $(BIN_DIR) $(OBJ_DIR):
 static-analysis:
 	cppcheck $(SRC_DIR)
 
+format-check:
+	@FAILED=0; \
+	for file in $(SRC) $(HEADER); do \
+		if ! [ clang-format --dry-run --Werror "$$file" 2>/dev/null ]; then \
+			echo "Needs formatting: $$file"; \
+			FAILED=1; \
+		fi; \
+	done; \
+	if [ $$FAILED -eq 1 ]; then \
+		echo ""; \
+		echo "Some files need formatting. Run: make format"; \
+		exit 1; \
+	fi; \
+	echo "All files are properly formatted!"
+
+format:
+	$(SRC) $(HEADER) | xargs clang-format -i --fail-on-incomplete-format
 clean:
 	@$(RM) -rv $(BIN_DIR) $(OBJ_DIR)
