@@ -25,17 +25,25 @@ static bool is_token_symbol(char symbol)
   }
 }
 
-struct token_list parse_tokens(const char *str)
+struct token_list * parse_tokens(const char * str)
 {
-  unsigned int strLen = strlen(str);
+  if (str == NULL) {
+    return NULL;
+  }
 
-  struct token *tokens = malloc(strLen * sizeof(struct token));
+  size_t str_length = str_length(str);
+
+  if (str_length == 0) {
+    return NULL;
+  }
+
+  struct token * tokens = malloc(str_length * sizeof(struct token));
 
   unsigned int currentSymbolIndex = 0;
   unsigned int tokenCount = 0;
   unsigned int characterCount = 0;
 
-  for (currentSymbolIndex = 0; currentSymbolIndex < strLen; currentSymbolIndex++) {
+  for (currentSymbolIndex = 0; currentSymbolIndex < str_length; currentSymbolIndex++) {
     if (is_token_symbol(str[currentSymbolIndex])) {
       tokens[tokenCount].symbol = str[currentSymbolIndex];
       tokens[tokenCount].range.start = characterCount;
@@ -45,14 +53,26 @@ struct token_list parse_tokens(const char *str)
     characterCount++;
   }
 
-  struct token *tmp = realloc(tokens, tokenCount * sizeof(struct token));
+  if (tokenCount < str_length) {
+    struct token * tmp = realloc(tokens, tokenCount * sizeof(struct token));
 
-  if (tmp == NULL) {
-    printf("Unable to reallocate token size.");
-    exit(EXIT_FAILURE);
+    if (tmp == NULL) {
+      printf("Unable to reallocate token size.");
+      exit(EXIT_FAILURE);
+    }
+
+    tokens = tmp;
   }
 
-  tokens = tmp;
+  struct token_list * token_list = malloc(sizeof(struct token_list));
 
-  return (struct token_list){.tokens = tokens, .size = tokenCount};
+  if (token_list == NULL) {
+    free(tokens);
+    return NULL;
+  }
+
+  token_list->tokens = tokens;
+  token_list->size = token_count;
+
+  return token_list;
 }

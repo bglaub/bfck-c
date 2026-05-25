@@ -6,8 +6,8 @@
 
 struct treenode
 {
-  struct treenode *parent;
-  struct treenode *children;
+  struct treenode * parent;
+  struct treenode * children;
   unsigned int child_count;
   struct range range;
   enum identifier identifier;

@@ -5,7 +5,7 @@
 
 struct token_list
 {
-  struct token *tokens;
+  struct token * tokens;
   unsigned int size;
 };
 

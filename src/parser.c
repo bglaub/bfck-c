@@ -5,8 +5,9 @@
 #include "identifier.h"
 
 
-enum identifier get_identifier(struct token * token) {
-  if(token->symbol == '>') {
+enum identifier get_identifier(struct token * token)
+{
+  if (token->symbol == '>') {
     return INCREMENT_DATA_POINTER;
   } else if (token->symbol == '<') {
     return DECREMENT_DATA_POINTER;
@@ -27,7 +28,8 @@ enum identifier get_identifier(struct token * token) {
   // this should never ever happen
 }
 
-static struct treenode *build_syntax_tree(struct treenode * currentNode, struct token_list *tokenlist, unsigned int currentTokenIndex)
+static struct treenode * build_syntax_tree(struct treenode * currentNode, struct token_list * tokenlist,
+                                           unsigned int currentTokenIndex)
 {
   if(tokenlist->size <= currentTokenIndex) {
     printf("Breaking Loop\n");
@@ -41,17 +43,9 @@ static struct treenode *build_syntax_tree(struct treenode * currentNode, struct 
   struct treenode * nextNode = currentNode;
   struct token * currentToken = &(tokenlist->tokens[currentTokenIndex]);
 
-  printf("--------------------------------------------------------------------------\n");
-  printf("Starting on token: %d, %c\n", currentTokenIndex, currentToken->symbol);
-  printf("Current node identifier: %d\n", currentNode->identifier);
-  printf("Current node child count: %d\n", currentNode->child_count);
-  printf("--------------------------------------------------------------------------\n");
-
-  if(currentToken->symbol == '[') {
-
-    printf("Creating loop node.\n");
+  if (currentToken->symbol == '[') {
     struct treenode * tmp = realloc(currentNode->children, (currentNode->child_count + 1) * sizeof(struct treenode));
-    
+
     if (tmp == NULL) {
       // handle bad condition
     }
@@ -84,7 +78,7 @@ static struct treenode *build_syntax_tree(struct treenode * currentNode, struct 
   }
 
   struct treenode * tmp = realloc(currentNode->children, (currentNode->child_count + 1) * sizeof(struct treenode));
-  
+
   if (tmp == NULL) {
     // handle bad condition
   }
@@ -101,14 +95,14 @@ static struct treenode *build_syntax_tree(struct treenode * currentNode, struct 
   build_syntax_tree(nextNode, tokenlist, ++currentTokenIndex);
 }
 
-struct treenode *parse_tree(struct token_list *tokenlist)
+struct treenode * parse_tree(struct token_list * tokenlist)
 {
   if (tokenlist == NULL || tokenlist->size <= 0) {
     // what do we do here
     return NULL;
   }
 
-  struct treenode *syntax_tree = malloc(sizeof(struct treenode));
+  struct treenode * syntax_tree = malloc(sizeof(struct treenode));
   syntax_tree[0].parent = NULL;
   syntax_tree[0].children = NULL;
   syntax_tree[0].child_count = 0;

@@ -4,13 +4,13 @@
 
 #include "fileparser.h"
 
-char *file_to_str(const char *fileName)
+char * file_to_str(const char * fileName)
 {
   char buffer[2];
-  char *str = NULL;
-  char *tmp = NULL;
+  char * str = NULL;
+  char * tmp = NULL;
 
-  FILE *fptr;
+  FILE * fptr;
 
   fptr = fopen(fileName, "r");
 
@@ -20,8 +20,8 @@ char *file_to_str(const char *fileName)
     tmp = realloc(str, i * 2 * sizeof(char));
 
     if (tmp == NULL) {
-      printf("Unable to allocate more memory.");
-      exit(EXIT_FAILURE);
+      free(str);
+      return NULL;
     }
 
     str = tmp;
