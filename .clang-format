@@ -9,6 +9,8 @@ TabWidth: 2
 UseTab: Never
 ContinuationIndentWidth: 2
 AccessModifierOffset: -2
+IndentCaseLabels: true
+IndentCaseBlocks: true
 
 # Brace style: opening brace on new line for functions, same line for control structures
 BreakBeforeBraces: Custom

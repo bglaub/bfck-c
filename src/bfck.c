@@ -1,10 +1,12 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#include "executor.h"
 #include "fileparser.h"
+#include "parser.h"
 #include "tokenlist.h"
 #include "tokenizer.h"
-#include "parser.h"
+
 
 int main(int argc, char ** argv)
 {
@@ -20,7 +22,7 @@ int main(int argc, char ** argv)
     exit(1);
   }
 
-  struct token_list * token_list = parse_tokens(file_str);
+  struct token_list * token_list = str_to_tokens(file_str);
 
   free(file_str);
 
@@ -29,10 +31,11 @@ int main(int argc, char ** argv)
     exit(1);
   }
 
-  struct treenode * syntax_tree = parse_tree(token_list);
+  struct tree_node * syntax_tree = parse_tree(token_list);
 
-  free(token_list.tokens);
-  free(token_list);
+  free_token_list(&token_list);
+
+  execute(syntax_tree);
 
   return 0;
 }

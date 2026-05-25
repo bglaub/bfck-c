@@ -7,31 +7,30 @@
 #include "tokenlist.h"
 #include "tokenizer.h"
 
-
 static bool is_token_symbol(char symbol)
 {
   switch (symbol) {
-  case '>':
-  case '<':
-  case '[':
-  case ']':
-  case '+':
-  case '-':
-  case '.':
-  case ',':
-    return true;
-  default:
-    return false;
+    case '>':
+    case '<':
+    case '[':
+    case ']':
+    case '+':
+    case '-':
+    case '.':
+    case ',':
+      return true;
+    default:
+      return false;
   }
 }
 
-struct token_list * parse_tokens(const char * str)
+struct token_list * str_to_tokens(const char * str)
 {
   if (str == NULL) {
     return NULL;
   }
 
-  size_t str_length = str_length(str);
+  size_t str_length = strlen(str);
 
   if (str_length == 0) {
     return NULL;
@@ -39,26 +38,24 @@ struct token_list * parse_tokens(const char * str)
 
   struct token * tokens = malloc(str_length * sizeof(struct token));
 
-  unsigned int currentSymbolIndex = 0;
-  unsigned int tokenCount = 0;
-  unsigned int characterCount = 0;
+  size_t current_symbol_index = 0;
+  size_t token_count = 0;
 
-  for (currentSymbolIndex = 0; currentSymbolIndex < str_length; currentSymbolIndex++) {
-    if (is_token_symbol(str[currentSymbolIndex])) {
-      tokens[tokenCount].symbol = str[currentSymbolIndex];
-      tokens[tokenCount].range.start = characterCount;
-      tokens[tokenCount].range.end = characterCount + 1;
-      tokenCount++;
+  for (current_symbol_index = 0; current_symbol_index < str_length; current_symbol_index++) {
+    if (is_token_symbol(str[current_symbol_index])) {
+      tokens[token_count].symbol = str[current_symbol_index];
+      tokens[token_count].range.start = current_symbol_index;
+      tokens[token_count].range.end = current_symbol_index + 1;
+      token_count++;
     }
-    characterCount++;
   }
 
-  if (tokenCount < str_length) {
-    struct token * tmp = realloc(tokens, tokenCount * sizeof(struct token));
+  if (token_count < str_length) {
+    struct token * tmp = realloc(tokens, token_count * sizeof(struct token));
 
     if (tmp == NULL) {
-      printf("Unable to reallocate token size.");
-      exit(EXIT_FAILURE);
+      free(tokens);
+      return NULL;
     }
 
     tokens = tmp;

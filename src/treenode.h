@@ -1,16 +1,16 @@
 #include "range.h"
 #include "identifier.h"
 
-#ifndef TREENODE_H
-#define TREENODE_H
+#ifndef TREE_NODE_H
+#define TREE_NODE_H
 
-struct treenode
+struct tree_node
 {
-  struct treenode * parent;
-  struct treenode * children;
-  unsigned int child_count;
+  struct tree_node * parent;
+  struct tree_node * children;
+  size_t child_count;
   struct range range;
   enum identifier identifier;
 };
 
-#endif // TREENODE_H
+#endif // TREE_NODE_H

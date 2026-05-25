@@ -4,7 +4,7 @@
 
 #include "fileparser.h"
 
-char * file_to_str(const char * fileName)
+char * file_to_str(const char * const file_name)
 {
   char buffer[2];
   char * str = NULL;
@@ -12,9 +12,9 @@ char * file_to_str(const char * fileName)
 
   FILE * fptr;
 
-  fptr = fopen(fileName, "r");
+  fptr = fopen(file_name, "r");
 
-  int i = 1;
+  size_t i = 1;
 
   while (fgets(buffer, 2, fptr)) {
     tmp = realloc(str, i * 2 * sizeof(char));
@@ -25,6 +25,7 @@ char * file_to_str(const char * fileName)
     }
 
     str = tmp;
+
     str = strcat(str, buffer);
 
     i++;
